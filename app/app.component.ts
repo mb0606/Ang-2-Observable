@@ -72,10 +72,38 @@ export class AppComponent {
 
         Observable.interval(1000)
             .map((x,i)	=>	{
-                return "calling	the	server	to	get	the	latest	news " + i;
+                console.log( "calling	the	server	to	get	the	latest	news " + i);
+                return [1,2,3]
             })
             .subscribe(news	=>	console.log(news));
 
+        Observable.interval(1000)
+            .flatMap((x,i)	=>	{
+                console.log( "calling	the	server	to	get	the	latest	news " + i);
+                return Observable.of([1,2,3])
+            })
+            .subscribe(news	=>	console.log(news));
+
+
+        var	userStream	=	Observable.of({
+            userId:	1,	username:	'mosh'
+        }).delay(2000);
+        var	tweetsStream	=	Observable.of([1,	2,	3]).delay(1500);
+
+        Observable.forkJoin(userStream,	tweetsStream)
+            .subscribe(result	=>	console.log("this is the result of the fork Join" + result));
+
+
+        Observable.forkJoin(userStream,	tweetsStream)
+            .map(joined	=> new	Object({user:	joined[0],	tweets:	joined[1]	}))
+            .subscribe(result	=>	console.log("This is the result from the second fork join " + result));
+
+        var	throwErr = Observable.throw(new	Error("Something failed."));
+
+        throwErr.subscribe(
+            x	=>	console.log(x),
+            error	=>	console.error(error)
+        );
 
     }
 }
